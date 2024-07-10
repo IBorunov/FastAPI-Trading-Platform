@@ -56,3 +56,23 @@ class Trade(BaseModel):
     amount: float = Field(ge=0)
 
 
+@app.get('/trades', response_model=List[Trade])
+def get_trades(limit: int = 1, offset: int = 0):
+    return trades[offset:][:limit]
+
+
+@app.get('/users/{user_id}', response_model=List[User])
+def get_user(user_id: int):
+    return [user for user in users if user.get('id') == user_id]
+
+
+@app.post('/users/{user_id}', response_model=List[User])
+def change_name(user_id: int, new_name: str):
+    user = [user for user in users if user.get('id') == user_id][0]
+    if user is None:
+        raise HTTPException(status_code=404, detail='User not found')
+    user['name'] = new_name
+    return {'status': 200, 'data': user}
+
+
+
