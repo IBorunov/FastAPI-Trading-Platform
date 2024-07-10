@@ -39,7 +39,7 @@ class User(BaseModel):
     id: int
     role: str
     name: str
-    degree: Optional[UserDegree] = []
+    degree: Optional[list[UserDegree]] = []
 
 
 class TradeSide(Enum):
@@ -56,17 +56,17 @@ class Trade(BaseModel):
     amount: float = Field(ge=0)
 
 
-@app.get('/trades', response_model=List[Trade])
+@app.get('/trades', response_model=list[Trade])
 def get_trades(limit: int = 1, offset: int = 0):
     return trades[offset:][:limit]
 
 
-@app.get('/users/{user_id}', response_model=List[User])
+@app.get('/users/{user_id}', response_model=list[User])
 def get_user(user_id: int):
     return [user for user in users if user.get('id') == user_id]
 
 
-@app.post('/users/{user_id}', response_model=List[User])
+@app.post('/users/{user_id}', response_model=list[User])
 def change_name(user_id: int, new_name: str):
     user = [user for user in users if user.get('id') == user_id][0]
     if user is None:
@@ -75,7 +75,7 @@ def change_name(user_id: int, new_name: str):
     return {'status': 200, 'data': user}
 
 
-@app.delete('/users/{user_id}', response_model=List[User])
+@app.delete('/users/{user_id}', response_model=list[User])
 def delete_user(user_id: int):
     user = next((user for user in users if user.get('id') == user_id), None)
     if user is None:
@@ -85,6 +85,6 @@ def delete_user(user_id: int):
 
 
 @app.post('/trades')
-def add_trades(trade: List[Trade]):
+def add_trades(trade: list[Trade]):
     trades.extend(trade)
     return {'status': 200, 'data': trades}
