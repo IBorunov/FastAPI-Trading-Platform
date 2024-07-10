@@ -75,4 +75,16 @@ def change_name(user_id: int, new_name: str):
     return {'status': 200, 'data': user}
 
 
+@app.delete('/users/{user_id}', response_model=List[User])
+def delete_user(user_id: int):
+    user = next((user for user in users if user.get('id') == user_id), None)
+    if user is None:
+        raise HTTPException(status_code=404, detail='User not found')
+    users.remove(user)
+    return {'status': 200, 'data': users}
 
+
+@app.post('/trades')
+def add_trades(trade: List[Trade]):
+    trades.extend(trade)
+    return {'status': 200, 'data': trades}
