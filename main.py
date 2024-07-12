@@ -3,7 +3,19 @@ from enum import Enum
 from typing import List, Optional
 
 from fastapi import FastAPI, HTTPException
+from fastapi_users import FastAPIUsers
 from pydantic import BaseModel, Field
+
+from authentification.auth import auth_backend
+from authentification.schemas import UserRead, UserCreate
+
+from authentification.database import User
+from authentification.user_manager import get_user_manager
+
+fastapi_users = FastAPIUsers[User, int](
+    get_user_manager,
+    [auth_backend],
+)
 
 app = FastAPI(title='Trading App')
 
@@ -22,6 +34,17 @@ trades = [
     {'id': 2, 'trader_id': 1, 'currency': 'USD', 'side': 'sell', 'price': 79.87, 'amount': 3.27},
 ]
 
+app.include_router(
+    fastapi_users.get_auth_router(auth_backend),
+    prefix="/auth/jwt",
+    tags=["auth"],
+)
+
+app.include_router(
+    fastapi_users.get_register_router(UserRead, UserCreate),
+    prefix="/auth",
+    tags=["auth"],
+)
 
 class Ranking(Enum):
     NEWBIE = 'Newbie'

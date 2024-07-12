@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, IntegerIDMixin
 
-from database import User, get_user_db
+from authentification.database import User, get_user_db
 from config import PASS_AND_VER_SECRET
 
 SECRET = PASS_AND_VER_SECRET
