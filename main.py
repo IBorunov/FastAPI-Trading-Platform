@@ -19,6 +19,18 @@ fastapi_users = FastAPIUsers[User, int](
 
 app = FastAPI(title='Trading App')
 
+app.include_router(
+    fastapi_users.get_auth_router(auth_backend),
+    prefix="/auth/jwt",
+    tags=["auth"],
+)
+
+app.include_router(
+    fastapi_users.get_register_router(UserRead, UserCreate),
+    prefix="/auth",
+    tags=["auth"],
+)
+
 users = [
     {'id': 1, 'role': 'admin', 'name': 'Bob'},
     {'id': 2, 'role': 'manager', 'name': 'Anne'},
@@ -33,19 +45,6 @@ trades = [
     {'id': 1, 'trader_id': 1, 'currency': 'USD', 'side': 'buy', 'price': 79.87, 'amount': 2.15},
     {'id': 2, 'trader_id': 1, 'currency': 'USD', 'side': 'sell', 'price': 79.87, 'amount': 3.27},
 ]
-
-app.include_router(
-    fastapi_users.get_auth_router(auth_backend),
-    prefix="/auth/jwt",
-    tags=["auth"],
-)
-
-app.include_router(
-    fastapi_users.get_register_router(UserRead, UserCreate),
-    prefix="/auth",
-    tags=["auth"],
-)
-
 class Ranking(Enum):
     NEWBIE = 'Newbie'
     PRO = 'Pro'
